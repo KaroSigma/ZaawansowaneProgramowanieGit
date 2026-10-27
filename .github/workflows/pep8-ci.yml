@@ -21,4 +21,4 @@ jobs:
         
     - name: Run pycodestyle syntax validation
       run: |
-        pycodestyle . --count --exclude=venv
+        pycodestyle . --count --exclude=.venv,venv
