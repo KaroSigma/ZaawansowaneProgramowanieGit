@@ -54,4 +54,3 @@ if not lista_browarow:
 else:
     for browar in lista_browarow:
         print(browar)
-        
