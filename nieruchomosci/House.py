@@ -1,5 +1,6 @@
 from nieruchomosci.Property import Property
 
+
 class House(Property):
     def __init__(
         self, area: str, rooms: int, price: str, address: str, plot: int

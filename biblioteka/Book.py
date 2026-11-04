@@ -1,5 +1,6 @@
 from biblioteka.Library import Library
 
+
 class Book:
     def __init__(
         self,
@@ -22,3 +23,4 @@ class Book:
             f"posiada {self.number_of_pages} stron, "
             f"znajduje się w bibliotece: {self.library.city}"
         )
+    
