@@ -1,16 +1,29 @@
-import csv
+import sqlite3
 
-QUEUE_FILE = 'queue.csv'
+DB_FILE = 'queue.db'
+
+def init_db():
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS tasks (
+            id TEXT PRIMARY KEY,
+            status TEXT
+        )
+    ''')
+    cursor.execute('DELETE FROM tasks') 
+    conn.commit()
+    conn.close()
 
 def add_task(task_id):
-    with open(QUEUE_FILE, mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([task_id, 'pending'])
+    conn = sqlite3.connect(DB_FILE)
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO tasks (id, status) VALUES (?, ?)", (task_id, 'pending'))
+    conn.commit()
+    conn.close()
     print(f"Dodano zadanie {task_id} do kolejki.")
 
 if __name__ == "__main__":
-    with open(QUEUE_FILE, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        
+    init_db()
     for i in range(1, 101):
         add_task(f"Zadanie_{i}")
