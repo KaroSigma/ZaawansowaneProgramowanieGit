@@ -49,7 +49,7 @@ if __name__ == "__main__":
         
         if task:
             print(f"Konsumuje zadanie: {task}. Zmieniono status na 'in_progress'.")
-            time.sleep(30) # Symulacja wykonania pracy trwającej 30s[cite: 6]
+            time.sleep(30)
             
             mark_task_as_done(task)
             print(f"Zakończono {task}. Zmieniono status na 'done'.")
