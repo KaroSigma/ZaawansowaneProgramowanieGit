@@ -6,7 +6,6 @@ class Student:
     def is_passed(self):
         srednia = sum(self.marks) / len(self.marks)
         return srednia > 50
-    
+
     def __str__(self):
         return f"Student {self.name}"
-    

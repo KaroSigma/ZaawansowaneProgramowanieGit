@@ -23,4 +23,3 @@ class Book:
             f"posiada {self.number_of_pages} stron, "
             f"znajduje się w bibliotece: {self.library.city}"
         )
-    
