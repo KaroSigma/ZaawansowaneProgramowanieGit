@@ -47,7 +47,7 @@ if __name__ == "__main__":
         task = get_pending_task_and_update()
         
         if task:
-            print(f"Import zadania: {task}. Zmieniono status na 'in_progress'.")
+            print(f"{task}. Zmieniono status na 'in_progress'.")
             time.sleep(30)
             
             mark_task_as_done(task)
