@@ -1,20 +1,44 @@
 import requests
 import argparse
 
+from browary.Brewery import Brewery
+from funkcje.zad_1 import powitanie
+from funkcje.zad_2 import mnozenie
+from funkcje.zad_3 import czy_parzysta
+from funkcje.zad_4 import porowywanie_liczb
+from funkcje.zad_5 import czy_w_lista
+from funkcje.zad_6 import lista_polaczona
 
-class Brewery:
-    def __init__(self, name: str, brewery_type: str, city: str, country: str):
-        self.name = name
-        self.brewery_type = brewery_type
-        self.city = city
-        self.country = country
+print(powitanie("Karolina", "Gluza"))
+print(mnozenie(2, 3))
 
-    def __str__(self) -> str:
-        return (
-            f"Browar: {self.name} ,typ: {self.brewery_type}, "
-            f"lokalizacja: {self.city}, {self.country}"
-        )
+wynik = czy_parzysta(5)
+if wynik:
+    print("Liczba parzysta")
+else:
+    print("Liczba nieparzysta")
 
+print(porowywanie_liczb(1, 2, 3))
+print(czy_w_lista([1, 2, 3], 2))
+print(lista_polaczona([1, 2, 3], [2, 3, 4]))
+
+url = "https://api.openbrewerydb.org/v1/breweries?per_page=20"
+
+odpowiedz = requests.get(url)
+dane_z_api = odpowiedz.json()
+lista_browarow = []
+
+for element in dane_z_api:
+    nowy_browar = Brewery(
+        name=element.get("name"),
+        brewery_type=element.get("brewery_type"),
+        city=element.get("city"),
+        country=element.get("country"),
+    )
+    lista_browarow.append(nowy_browar)
+
+for browar in lista_browarow:
+    print(browar)
 
 parser = argparse.ArgumentParser(
     description="Pobiera informacje o browarach z API."
@@ -54,3 +78,4 @@ if not lista_browarow:
 else:
     for browar in lista_browarow:
         print(browar)
+
