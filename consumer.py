@@ -43,16 +43,15 @@ def mark_task_as_done(task_id):
         writer.writerows(tasks)
 
 if __name__ == "__main__":
-    print("Uruchamianie konsumenta...")
     while True:
         task = get_pending_task_and_update()
         
         if task:
-            print(f"Konsumuje zadanie: {task}. Zmieniono status na 'in_progress'.")
+            print(f"Import zadania: {task}. Zmieniono status na 'in_progress'.")
             time.sleep(30)
             
             mark_task_as_done(task)
             print(f"Zakończono {task}. Zmieniono status na 'done'.")
         else:
-            print("Brak pracy. Sprawdzam ponownie za 5s...")
+            print("Brak pracy")
             time.sleep(5)
