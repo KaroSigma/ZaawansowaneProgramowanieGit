@@ -1,57 +1,37 @@
-import csv
 import time
-import os
+import pika
 
-QUEUE_FILE = 'queue.csv'
+QUEUE_NAME = 'tasks_queue'
 
-def get_pending_task_and_update():
-    if not os.path.exists(QUEUE_FILE):
-        return None
 
-    tasks = []
-    with open(QUEUE_FILE, mode='r') as file:
-        reader = csv.reader(file)
-        tasks = list(reader)
+def callback(ch, method, properties, body):
+    task_id = body.decode('utf-8')
+    print(f"{task_id}. Zmieniono status na 'in_progress'.")
+    time.sleep(30)
 
-    task_to_do = None
-    for row in tasks:
-        if len(row) == 2 and row[1] == 'pending':
-            task_to_do = row[0]
-            row[1] = 'in_progress'
-            break
+    ch.basic_ack(delivery_tag=method.delivery_tag)
+    print(f"Zakończono {task_id}. Zmieniono status na 'done'.")
 
-    if task_to_do:
-        with open(QUEUE_FILE, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerows(tasks)
-            
-    return task_to_do
-
-def mark_task_as_done(task_id):
-    tasks = []
-    with open(QUEUE_FILE, mode='r') as file:
-        reader = csv.reader(file)
-        tasks = list(reader)
-
-    for row in tasks:
-        if row[0] == task_id:
-            row[1] = 'done'
-            break
-
-    with open(QUEUE_FILE, mode='w', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerows(tasks)
 
 if __name__ == "__main__":
-    while True:
-        task = get_pending_task_and_update()
-        
-        if task:
-            print(f"{task}. Zmieniono status na 'in_progress'.")
-            time.sleep(30)
-            
-            mark_task_as_done(task)
-            print(f"Zakończono {task}. Zmieniono status na 'done'.")
-        else:
-            print("Brak pracy")
-            time.sleep(5)
+    credentials = pika.PlainCredentials('guest', 'guest')
+    parameters = pika.ConnectionParameters(
+        host='localhost',
+        port=8081,
+        credentials=credentials
+    )
+
+    connection = pika.BlockingConnection(parameters)
+    channel = connection.channel()
+    channel.queue_declare(queue=QUEUE_NAME, durable=True)
+    channel.basic_qos(prefetch_count=1)
+    channel.basic_consume(queue=QUEUE_NAME, on_message_callback=callback)
+
+    print("Oczekiwanie na zadania. Naciśnij CTRL+C, aby zakończyć.")
+    try:
+        channel.start_consuming()
+    except KeyboardInterrupt:
+        print("Zatrzymano konsumenta.")
+    finally:
+        if connection.is_open:
+            connection.close()
